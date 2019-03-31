@@ -11,23 +11,27 @@ Wejściowe parametry sieci
 -------------------------
 | Parametr | wartość | komentarz(opcionalny) |
 | ------------- |:-------------:| -----:|
-|   PC 1 |  
-| IP - address  | 192.168.10.10 | |
-| MASKA  | 	255.255.255.0 | |
+|   PC 1 | debian 9.8 |
+| IP - address  | 10.0.2.15 | |
+| MASKA  | 	/24 | |
 |   |  | |
-| PC 2  |  | |
-| IP - address  | 172.16.100.100 | |
-| MASKA  | 255.255.0.0 | |
+| PC 2  | debian 9.8 | |
+| IP - address  | 192.168.10.5 | |
+| MASKA  | /24| |
 
 Weryfikacja połączenia
 
 Polecenie
-ping
+ping <adres ip>
 
 Efekt
-Nowa statyczna konfiguracja
+64 bytes from 172.16.100.11 icmp_seq=1 ttl=64 time=0.637 ms
 
 Statyczna konfiguracja parametrów połączenia
+Aby konfiguracja sieci na wirtualnych maszynach była zapisana po ich restarcie należy w zapisać w pliku lokalizacji : /etc/network/interrfaces np. |``Iface enp0s3 inet static Adress 192.168.100.1 Netmask 255.255.255.0
+
+Auto enp0s8 Iface enp0s8 inet static Adress 192.168.200.1 Netmask 255.255.255.0 Up ip route add 192.168.0.0/24 via 192.168.200.2 Down ip route del 192.168.0.0/24``|
+
 Wejściowe parametry sieci
 -------------------------
 | Parametr | wartość | komentarz(opcionalny) |
@@ -43,9 +47,11 @@ Wejściowe parametry sieci
 Weryfikacja połączenia
 
 Polecenie
-```
-```
 
+ping
+```
+ping
+```
 Efekt
 ```
 ```
