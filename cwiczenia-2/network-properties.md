@@ -12,22 +12,20 @@ Wejściowe parametry sieci
 | Parametr | wartość | komentarz(opcionalny) |
 | ------------- |:-------------:| -----:|
 |   PC 1 |  
-| IP - address  | | |
-| MASKA  | | |
+| IP - address  | 192.168.10.10 | |
+| MASKA  | 	255.255.255.0 | |
 |   |  | |
 | PC 2  |  | |
-| IP - address  | | |
-| MASKA  | | |
+| IP - address  | 172.16.100.100 | |
+| MASKA  | 255.255.0.0 | |
 
 Weryfikacja połączenia
 
 Polecenie
-```
-```
+ping
 
 Efekt
-```
-```
+Nowa statyczna konfiguracja
 
 Statyczna konfiguracja parametrów połączenia
 Wejściowe parametry sieci
@@ -81,10 +79,10 @@ Warto wiedzieć
 -------------------------
 | Parametr | wartość | komentarz(opcionalny) |
 | ------------- |:-------------:| -----:|
-| Lokalizacja pliku z konfiguracją sieci| | |
-| UP -> Wyłączenie interfejsu sieciowego| | |
-| DOWN -> Włączenie interfejsu sieciowego| | |
-| Sprawdzenie obecnych parametrów | | |
-| lista wszystkich interfejsów | | |
+| Lokalizacja pliku z konfiguracją sieci| /sbin | |
+| UP -> Wyłączenie interfejsu sieciowego| ifup | |
+| DOWN -> Włączenie interfejsu sieciowego| ifdown | |
+| Sprawdzenie obecnych parametrów | ip a | |
+| lista wszystkich interfejsów | ip addr | |
 | Które interfejsy jakie porty słuchają | | |
 
