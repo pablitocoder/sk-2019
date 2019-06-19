@@ -1,0 +1,247 @@
+1. Ustalenie maski podsieci
+  - maska podsieci dla routera głównego to /29 (6 hostów)
+  - maska podsieci dla sal - 35 stanowisk dla każdego laboratorium - maska wynonsi /26 (62 hosty)
+  - maska podsieci dla wifi wynosi /22 (1022 hosty)
+  
+2. Ustalenie sieci
+  Bazowy adres IP - 188.156.220.160
+  
+  Router główny
+  - piętro 0 (router 1): 188.156.220.160/29 - LAN1
+  - piętro 1 (router 2): 188.156.220.168/29 - LAN2
+  - piętro 2 (router 3): 188.156.220.176/29 - LAN3
+  - wifi: 188.156.220.184/29 - LAN4
+  
+  Router 1 (piętro 0)
+  - sala 009
+    10.0.0.0/26
+  - sala 013
+    10.0.1.0/26
+  - sala 014
+    10.0.2.0/26
+  - sala 017 (planowana)
+    10.0.3.0/26
+    
+  Router 2 (piętro 1)
+  - sala 115
+    10.0.4.0/26
+  - sala 116
+    10.0.5.0/26
+  - sala 117
+    10.0.6.0/26
+  - sala 122
+    10.0.7.0/26
+    
+  Router 3 (piętro 2)
+  - 201
+    10.0.8.0/26
+  - 202
+    10.0.9.0/26
+  - 203
+    10.0.10.0/26
+  - planowane 204
+    10.0.11.0/26
+    
+3. Dodanie adresów IP
+
+  Router Główny - PC0
+    enp0s3: internet
+    enp0s8 (piętro 0)
+      address 188.156.220.161
+      netmask 255.255.255.248
+    enp0s9 (piętro 1)
+      address 188.156.220.169
+      netmask 255.255.255.248
+    enp0s10 (piętro 2)
+      address 188.156.220.176
+      netmask 255.255.255.248
+    enp0s11 (wifi)
+      address 188.156.220.184
+      netmask 255.255.252.0
+        
+        Urządzenia pod wifi
+          adresy z dhcp 188.156.220.1 - 188.156.227.254
+      
+  Router 1 - PC1
+    enp0s3
+      address 188.156.220.178
+      netmask 255.255.255.248
+    enp0s8
+      address 10.0.0.1
+      netmask 255.255.255.192
+    enp0s9
+      address 10.0.1.1
+      netmask 255.255.255.192
+    enp0s10
+      address 10.0.2.1
+      netmask 255.255.255.192
+    enp0s11
+      address 10.0.3.1
+      netmask 255.255.255.192
+          
+        Adresy z dhcp w salach:
+	009 - 10.0.0.2 - 10.0.0.62
+	013 - 10.0.1.2 - 10.0.1.62
+	014 - 10.0.2.2 - 10.0.2.62
+	017 - 10.0.3.2 - 10.0.3.62
+
+ Router 2 - PC2
+    enp0s3
+      address 188.156.220.170
+      netmask 255.255.255.248
+    enp0s8
+      address 10.0.4.1
+      netmask 255.255.255.192
+    enp0s9
+      address 10.0.5.1
+      netmask 255.255.255.192
+    enp0s10
+      address 10.0.6.1
+      netmask 255.255.255.192
+    enp0s11
+      address 10.0.7.1
+      netmask 255.255.255.192
+
+  Adresy z dhcp w salach:
+	115 - 10.0.4.2 - 10.0.5.62
+	116 - 10.0.5.2 - 10.0.6.62
+	117 - 10.0.6.2 - 10.0.7.62
+	122 - 10.0.7.2 - 10.0.7.62
+
+      
+  Router 3 - PC3
+    enp0s3
+      address 188.156.220.162
+      netmask 255.255.255.248
+    enp0s8
+      address 10.0.8.1
+      netmask 255.255.255.192
+    enp0s9
+      address 10.0.9.1
+      netmask 255.255.255.192
+    enp0s10
+      address 10.0.10.1
+      netmask 255.255.255.192
+    enp0s11
+      address 10.0.11.1
+      netmask 255.255.255.192
+        
+  Adresy z dhcp w salach:
+	115 - 10.0.8.2 - 10.0.8.62
+	116 - 10.0.9.2 - 10.0.9.62
+	117 - 10.0.10.2 - 10.0.10.62
+	122 - 10.0.11.2 - 10.0.11.62
+            
+4. Uruchomienie dhcp + wpisanie dns
+  Router Głóny - PC0
+    WIFI
+      
+	nano /etc/default/isc-dhcp-server 
+       należy odkomentować ścieżkę do pliku DHCPDv4_CONF
+        dopisać interfejs INTERFACESv4="enp0s10"
+      
+	nano /etc/dhcp/dhcpd.conf - dopisać konfiguracje sieci :
+        subnet 188.156.220.176 netmask 255.255.252.0 {
+          range 188.156.220.185 188.156.223.254;
+          option routers 188.156.220.186;
+          option domain-name-servers 1.1.1.1, 1.0.0.1;
+        }
+      systemctl restart isc-dhcp-server
+    
+  Router 1 - PC1 (ustawienei osobnych subnetów dla każdego)
+    SALA 009|013|014|017 
+      nano /etc/default/isc-dhcp-server 
+        odkomentowanie ścieżki do pliku config DHCPDv4_CONF
+        dopisanie interfejsu INTERFACESv4="enp0s8 enp0s9 enp0s10 enp0s11"
+      
+	w pliku /etc/dhcp/dhcpd.conf w nano ustawienie konfiguracji sieci:
+        subnet 10.0.0|1|2|3.0 netmask 255.255.255.192 {
+          range 10.0.0|1|2|3.1 10.0.0|1|2|3.62;
+          option routers 10.0.0|1|2|3.62;
+          option domain-name-servers 1.1.1.1, 1.0.0.1;
+        }
+      systemctl restart isc-dhcp-server
+  
+  PC2 Router1 (ustawienie osobnych subnetów dla każdego)
+    SALA 115|116|117|122
+      w pliku /etc/default/isc-dhcp-server w nano
+        odkomentowanie config DHCPDv4_CONF
+        dopisanie interfejsu INTERFACESv4="enp0s8 enp0s9 enp0s10 enp0s11"
+      
+	w pliku /etc/dhcp/dhcpd.conf - ustawienie konfiguracji sieci:
+        subnet 10.0.4|5|6|7.0 netmask 255.255.255.192 {
+          range 10.0.4|5|6|7.1 10.0.4|5|6|7.62;
+          option routers 10.0.4|5|6|7.62;
+          option domain-name-servers 1.1.1.1, 1.0.0.1;
+        }
+      systemctl restart isc-dhcp-server
+  
+  PC3 Router2 (ustawienie osobnych subnetów dla każdego)
+    SALA 201|202|203|204
+      w pliku /etc/default/isc-dhcp-server w nano odkomentowanie ścieżki do pliku config DHCPDv4_CONF
+        dopisanie ścieżki INTERFACESv4="enp0s8 enp0s9 enp0s10 enp0s11"
+      w pliku /etc/dhcp/dhcpd.conf w nano - ustawienie konfiguracji sieci;
+        subnet 10.0.8|9|10|11.0 netmask 255.255.255.192 {
+          range 10.0.8|9|10|11.1 10.0.8|9|10|11.62;
+          option routers 10.0.8|9|10|11.62;
+          option domain-name-servers 1.1.1.1, 1.0.0.1;
+        }
+      systemctl restart isc-dhcp-server
+        
+5. Ustalnie routingu
+  Router 1 - PC1
+    up ip rotue add default via 188.156.220.177
+    
+       Komputery dla Routera 1 w salach 009|013|014|017 (dhcp server)
+         up ip route add default via 10.0.0|1|2|3.1
+    
+  Router 2 - PC2
+    up ip rotue add default via 188.156.220.169
+    
+       Komputery dla Routera 2 w salach 115|116|117|122 (dhcp server)
+         up ip route add default via 10.0.4|5|6|7.1
+  
+  Router 3 - PC3
+    up ip rotue add default via 188.156.220.161
+    
+       Komputery dla Routera 3 w salach 201|202|203|204 (dhcp server)
+         up ip route add default via 10.0.8|9|10|11.1
+        
+  wifi (dhcp server)
+    up ip rotue add default via 188.156.220.184
+         
+6. Włączenie forwardowania ip
+  PC z routerami
+  odkomentować net.ipv4.ip_forward=1 w /etc/sysctl.d/99-sysctl.conf
+
+7. Włączenie reguły masquerade
+  
+  Router Główny
+  iptables -t nat -A POSTROUTING -s 188.156.220.160/29 -o enp0s3 -j MASQUERADE
+  iptables -t nat -A POSTROUTING -s 188.156.220.168/29 -o enp0s3 -j MASQUERADE
+  iptables -t nat -A POSTROUTING -s 188.156.220.176/29 -o enp0s3 -j MASQUERADE
+  iptables -t nat -A POSTROUTING -s 188.156.220.184/22 -o enp0s3 -j MASQUERADE
+  
+  Router 1 - PC1
+  iptables -t nat -A POSTROUTING -s 10.0.0.0/26 -o enp0s3 -j MASQUERADE
+  iptables -t nat -A POSTROUTING -s 10.0.1.0/26 -o enp0s3 -j MASQUERADE
+  iptables -t nat -A POSTROUTING -s 10.0.2.0/26 -o enp0s3 -j MASQUERADE
+  iptables -t nat -A POSTROUTING -s 10.0.3.0/26 -o enp0s3 -j MASQUERADE
+                                 
+  Router 2 - PC2
+  iptables -t nat -A POSTROUTING -s 10.0.4.0/26 -o enp0s3 -j MASQUERADE
+  iptables -t nat -A POSTROUTING -s 10.0.5.0/26 -o enp0s3 -j MASQUERADE
+  iptables -t nat -A POSTROUTING -s 10.0.6.0/26 -o enp0s3 -j MASQUERADE
+  iptables -t nat -A POSTROUTING -s 10.0.7.0/26 -o enp0s3 -j MASQUERADE
+  
+  Router 3 - PC3
+  iptables -t nat -A POSTROUTING -s 10.0.8.0/26 -o enp0s3 -j MASQUERADE
+  iptables -t nat -A POSTROUTING -s 10.0.9.0/26 -o enp0s3 -j MASQUERADE
+  iptables -t nat -A POSTROUTING -s 10.0.10.0/26 -o enp0s3 -j MASQUERADE
+  iptables -t nat -A POSTROUTING -s 10.0.11.0/26 -o enp0s3 -j MASQUERADE
+  
+  zapisanie reguł:
+    ipatables-save > /etc/iptables.up.rules
+    
+    dodanie wpisu w /etc/network/interfaces
+      post-up iptables-restore < /etc/iptables.up.rules
